@@ -1,0 +1,26 @@
+https://api.pointone.co.uk/OOAppService.svc/Order/JSON
+
+{
+	"APIKey":"4ACE516C-B2C1-404D-9DD3-4AC5722E1556",
+	"SiteID":"0A8D8262-1E1C-48DD-AEA1-E77E7AE73EF6",
+	"UserID":"ab9d1dd6-52ea-4acf-bb29-06f2da959f33",
+	"OrderItems":[
+		{"ID":"72bbed7c-99ef-4f9d-869d-1e4e2ba1e1bc","Quantity":"2 "},
+		{"ID":"cd2c224b-af9c-4843-9dfd-4edd61dacba9","Quantity":"1 "}
+	],
+	"OrderType":1,
+	"RequiredDate":"10/01/2016",
+	"RequiredTime":"20:15",
+	"Name":"test test",
+	"DeliveryAddress":"test test test test test ",
+	"DeliveryPostcode":"n2 3re",
+	"TelNo":"11111111111",
+	"Email":"katsuya.tada@hotmail.co.uk",
+	"DeliveryInstructions":"FREEOKONOMIYAKI2016",
+	"DeliveryCost":5,
+  	"PromoCode":"sample",
+	"Payment":{
+		"PaymentType":"4"
+	},
+	"OrderTotal":6.65
+}
