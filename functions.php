@@ -363,28 +363,39 @@ function woocommerce_custom_discount() {
 	return;
 
 	$exclude_cate = array("soft-drink","party-special-platter","japanese-tableware-gift-sets","drink","sushi-boxes");
-
 	$items = $woocommerce->cart->get_cart();
 	$discount = '';
-	foreach($items as $item => $values) {
-		$_product = $values['data']->post;
-		$product_id = $_product->ID;
-		$quantity = $values['quantity'];
-		$price = get_post_meta($values['product_id'] , '_price', true);
-		$bool_discount = true;
 
-		$product_cat = wp_get_post_terms( $product_id, 'product_cat');
-		foreach ($product_cat as $value) {
-			if( in_array($value->slug, $exclude_cate) ){
-				$bool_discount = false;
+	$chosen_methods = WC()->session->get( 'chosen_shipping_methods' );
+	$chosen_shipping = $chosen_methods[0];
+
+	if ($chosen_shipping == 'local_pickup') {
+
+		foreach($items as $item => $values) {
+			$_product = $values['data']->post;
+			$product_id = $_product->ID;
+			$quantity = $values['quantity'];
+			$price = get_post_meta($values['product_id'] , '_price', true);
+			$bool_discount = true;
+
+			$product_cat = wp_get_post_terms( $product_id, 'product_cat');
+			foreach ($product_cat as $value) {
+				if( in_array($value->slug, $exclude_cate) ){
+					$bool_discount = false;
+				}
+			}
+			if(!empty($product_cat) && $bool_discount){
+				$discount = $discount + ($price * $quantity);
 			}
 		}
-		if(!empty($product_cat) && $bool_discount){
-			$discount = $discount + ($price * $quantity);
-		}
+
+		$discount = round($discount/10, 2, PHP_ROUND_HALF_DOWN);
+
+	}else{
+		$discount = 0;
 	}
 
-	$discount = round($discount/10, 2, PHP_ROUND_HALF_DOWN);
+
 	$woocommerce->cart->discount_cart = number_format($discount,2);
 	$woocommerce->cart->cart_contents_total = $woocommerce->cart->cart_contents_total - $woocommerce->cart->discount_cart;
 }
@@ -550,8 +561,8 @@ $today = date("d/m/Y");
 		"UserID" => "ab9d1dd6-52ea-4acf-bb29-06f2da959f33",
   		"OrderItems" => $itemList,
   		"OrderType" => $chosen_shipping_id,
-		//"RequiredDate" => $today,
-		"RequiredDate" => '12/01/2016',
+		"RequiredDate" => $today,
+		//"RequiredDate" => '12/01/2016',
   		"RequiredTime" => $collection_time,
   		"Name" => $customer_name,
  		"DeliveryAddress" => $shipping_address,
@@ -560,7 +571,7 @@ $today = date("d/m/Y");
   		"Email" => $email,
   		"DeliveryInstructions" => $comment,
   		"DeliveryCost" => $shipping_fee,
-  		//"PromoCode" => 'sample',
+  		"PromoCodeDiscount" => $discountAmount,
   		"Payment" => array(
   			"PaymentType" => "4"
   			),
@@ -599,7 +610,7 @@ $today = date("d/m/Y");
 		}
 		$_SESSION["TransactionID"] = $obj->TransactionID;
 		$_SESSION["CollectionTime"] = $collection_time;
-		wc_add_notice( json_encode($jsonValue, JSON_UNESCAPED_SLASHES) ,'error' );
+		//wc_add_notice( json_encode($jsonValue, JSON_UNESCAPED_SLASHES) ,'error' );
 
 	}else{
 		
@@ -666,6 +677,7 @@ function sendDataToEPOS($order_id){
   		"Email" => $email,
   		"DeliveryInstructions" => $comment,
   		"DeliveryCost" => $shipping_fee,
+  		"PromoCodeDiscount" => $discountAmount,
   		"Payment" => array(
   			"PaymentType" => "4",
   			"TransactionID"=>$transaction_id
