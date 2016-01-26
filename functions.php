@@ -326,7 +326,7 @@ function addRoyaltyPoint($order_id){
 }
 
 
-add_action( 'woocommerce_calculate_totals','apply_shipping_discount' );
+//add_action( 'woocommerce_calculate_totals','apply_shipping_discount' );
 function apply_shipping_discount() {
 	global $woocommerce;
 
@@ -354,6 +354,39 @@ function apply_shipping_discount() {
 	//echo "<pre>";var_dump(WC()->session->total);echo "</pre>";
 	//echo "<pre>";var_dump($woocommerce->cart);echo "</pre>";
 
+}
+
+add_action( 'woocommerce_cart_calculate_fees','woocommerce_custom_discount' );
+function woocommerce_custom_discount() {
+	global $woocommerce;
+	if ( is_admin() && ! defined( 'DOING_AJAX' ) )
+	return;
+
+	$exclude_cate = array("soft-drink","party-special-platter","japanese-tableware-gift-sets","drink","sushi-boxes");
+
+	$items = $woocommerce->cart->get_cart();
+	$discount = '';
+	foreach($items as $item => $values) {
+		$_product = $values['data']->post;
+		$product_id = $_product->ID;
+		$quantity = $values['quantity'];
+		$price = get_post_meta($values['product_id'] , '_price', true);
+		$bool_discount = true;
+
+		$product_cat = wp_get_post_terms( $product_id, 'product_cat');
+		foreach ($product_cat as $value) {
+			if( in_array($value->slug, $exclude_cate) ){
+				$bool_discount = false;
+			}
+		}
+		if(!empty($product_cat) && $bool_discount){
+			$discount = $discount + ($price * $quantity);
+		}
+	}
+
+	$discount = round($discount/10, 2, PHP_ROUND_HALF_DOWN);
+	$woocommerce->cart->discount_cart = number_format($discount,2);
+	$woocommerce->cart->cart_contents_total = $woocommerce->cart->cart_contents_total - $woocommerce->cart->discount_cart;
 }
 
 

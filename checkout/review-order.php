@@ -46,6 +46,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 				}
 			}
+			
+			if(WC()->cart->discount_cart): ?>
+				<tr class="<?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
+				<td class="product-name">Discount</td>
+				<td class="product-total">£-<?php echo WC()->cart->discount_cart; ?></td>
+				<tr>
+			<?php endif;
+
 
 			do_action( 'woocommerce_review_order_after_cart_contents' );
 		?>
