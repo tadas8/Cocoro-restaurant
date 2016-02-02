@@ -369,6 +369,17 @@ function woocommerce_custom_discount() {
 	$chosen_methods = WC()->session->get( 'chosen_shipping_methods' );
 	$chosen_shipping = $chosen_methods[0];
 
+	if(35<$woocommerce->cart->subtotal){
+		foreach ($woocommerce->shipping->packages as $key => $value) {
+			if($value['rates']['local_delivery']->cost){
+				$value['rates']['local_delivery']->cost = 0;
+				//echo'<pre>';var_dump($key);echo'</pre>';
+			}
+		}
+		$woocommerce->cart->shipping_total = 0;
+	}
+
+
 	if ($chosen_shipping == 'local_pickup') {
 
 		foreach($items as $item => $values) {
@@ -393,6 +404,7 @@ function woocommerce_custom_discount() {
 
 	}else{
 		$discount = 0;
+
 	}
 
 

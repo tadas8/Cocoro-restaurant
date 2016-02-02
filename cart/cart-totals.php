@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<tr class="shipping">
 				<th><?php _e( 'Shipping', 'woocommerce' ); ?></th>
-				<td><?php woocommerce_shipping_calculator(); ?></td>
+				<td style="line-height:1.4;"><?php woocommerce_shipping_calculator(); ?></td>
 			</tr>
 
 		<?php endif; ?>
@@ -72,12 +72,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php endif; ?>
 		<?php endif; ?>
 
+
+		<?php
+		if(WC()->cart->discount_cart && WC()->cart->discount_cart != 0): ?>
+			<tr class="">
+			<td class="product-name">Discount</td>
+			<td class="product-total">£-<?php echo WC()->cart->discount_cart; ?></td>
+			<tr>
+		<?php endif; ?>
+
+
+
 		<?php do_action( 'woocommerce_cart_totals_before_order_total' ); ?>
 
 		<tr class="order-total">
 			<th><?php _e( 'Total', 'woocommerce' ); ?></th>
 			<td><?php wc_cart_totals_order_total_html(); ?></td>
 		</tr>
+
+
+
 
 		<?php do_action( 'woocommerce_cart_totals_after_order_total' ); ?>
 
