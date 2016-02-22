@@ -583,6 +583,7 @@ $today = date("d/m/Y");
   		"Email" => $email,
   		"DeliveryInstructions" => $comment,
   		"DeliveryCost" => $shipping_fee,
+  		"PromoCode" => "sample",
   		"PromoCodeDiscount" => $discountAmount,
   		"Payment" => array(
   			"PaymentType" => "4"
@@ -689,6 +690,7 @@ function sendDataToEPOS($order_id){
   		"Email" => $email,
   		"DeliveryInstructions" => $comment,
   		"DeliveryCost" => $shipping_fee,
+  		"PromoCode" => "sample",
   		"PromoCodeDiscount" => $discountAmount,
   		"Payment" => array(
   			"PaymentType" => "4",
@@ -743,6 +745,16 @@ $fields['order']['order_comments']['label'] = 'Present Code';
 return $fields;
 }
 
+
+add_action('wp_head','noCommentBoxForUnder25');
+function noCommentBoxForUnder25() {
+	global $woocommerce;
+	if(25>$woocommerce->cart->subtotal){
+		$output="<style> #order_comments_field { display:none; } </style>";
+	}
+	echo $output;
+
+}
 
 /**
  * login page customise
